@@ -11,12 +11,12 @@ export async function fetchContacts() {
     return data;
 };
 
-export async function addContact(newContact) {
+export async function addContacts(newContact) {
     const { data } = await instance.post('/', newContact);
     return data;
 };
 
-export async function removeContact(id) {
+export async function removeContacts(id) {
     const { data } = await instance.delete(`/${id}`);
     return data;
 };
