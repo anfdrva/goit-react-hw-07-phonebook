@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getContacts } from 'redux/selectors';
 import { requestAddContact } from 'redux/operations';
+import { Label, StyledForm, AddContactBtn } from './ContactForm.styled';
 
 const ContactForm = () => {
   const [contact, setContact] = useState({
@@ -42,11 +43,10 @@ const ContactForm = () => {
   const { name, phone } = contact;
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <label >
+      <StyledForm onSubmit={handleSubmit}>
+        <Label>
           Name
           <input
-            
             type="text"
             name="name"
             pattern="^[a-zA-Zа-яА-Я]+(([' \-][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
@@ -55,12 +55,11 @@ const ContactForm = () => {
             value={name}
             onChange={handleChange}
           />
-        </label>
+        </Label>
 
-        <label >
+        <Label>
           Number
           <input
-            
             type="tel"
             name="phone"
             pattern="\+?\d{1,4}?[ .\-\s]?\(?\d{1,3}?\)?[ .\-\s]?\d{1,4}[ .\-\s]?\d{1,4}[ .\-\s]?\d{1,9}"
@@ -69,12 +68,12 @@ const ContactForm = () => {
             value={phone}
             onChange={handleChange}
           />
-        </label>
+        </Label>
 
-        <button  type="submit">
+        <AddContactBtn  type="submit">
           Add contact
-        </button>
-      </form>
+        </AddContactBtn>
+      </StyledForm>
     </div>
   );
 };

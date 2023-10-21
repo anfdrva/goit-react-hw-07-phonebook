@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { fetchContacts, requestDeleteContact } from 'redux/operations';
 import Loader from 'components/Loader/Loader';
 import Error from 'components/Error/Error';
+import { ContactItem, DeleteContactBtn } from './ContactsList.styled';
 
 const ContactList = () => {
   const filter = useSelector(getFilter);
@@ -27,21 +28,21 @@ const ContactList = () => {
     <>
     {contacts.isLoading && <Loader />}
     {contacts.error && <Error error={contacts.error}/>}
-    <ul >
+    <ul>
         {filteredContacts.map(contact => {
           const { id, name, phone } = contact;
           return (
-            <li key={id}>
+            <ContactItem key={id}>
               {name}: {phone}
               <div>
-                <button
+                <DeleteContactBtn
                   type="button"
                   onClick={() => deleteContact(id)}
                 >
                   Delete
-                </button>
+                </DeleteContactBtn>
               </div>
-            </li>
+            </ContactItem>
           );
         })}
       </ul>
