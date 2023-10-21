@@ -1,70 +1,53 @@
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
-import {
-  selectContacts,
-  selectError,
-  selectIsLoading,
-  selectFilteredContacts,
-} from 'redux/selectors';
-import { deleteContact } from 'redux/operations';
-import { ColorRing, FallingLines } from 'react-loader-spinner';
-import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getContacts, getFilter } from 'redux/selectors';
+import { useEffect } from 'react';
+import { fetchContacts, requestDeleteContact } from 'redux/operations';
+import Loader from 'components/Loader/Loader';
+import Error from 'components/Error/Error';
 
-function ContactsList() {
+const ContactList = () => {
+  const filter = useSelector(getFilter);
+  const contacts = useSelector(getContacts);
   const dispatch = useDispatch();
-  const contacts = useSelector(selectContacts);
-  const isLoading = useSelector(selectIsLoading);
-  const isError = useSelector(selectError);
-  const filteredContacts = useSelector(selectFilteredContacts);
-  const [isLoadingMap, setIsLoadingMap] = useState({});
 
-  const handleClickDeleteButton = event => {
-    const { value } = event.currentTarget;
-    if (isLoadingMap[value]) {
-      return;
-    }
-    setIsLoadingMap(prevState => ({
-      ...prevState,
-      [value]: true,
-    }));
-    dispatch(deleteContact(value));
+  
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
+
+  const deleteContact = id => {
+    dispatch(requestDeleteContact(id));
   };
 
-  return (
-    <div>
-      <ul>
-        {isError && <p style={{ color: 'red', fontSize: 18 }}>{isError}</p>}
-        {isLoading && contacts.length === 0 ? (
-          <FallingLines
-            color="#4fa94d"
-            width="100"
-            visible={true}
-            ariaLabel="falling-lines-loading"
-          />
-        ) : (
-          filteredContacts.map(contact => (
-            <li key={contact.id}>
-              <p>{contact.name}:</p>
-              <p>{contact.phone}</p>
-              <button
-                type="button"
-                name="delete"
-                value={contact.id}
-                disabled={isLoadingMap[contact.id]}
-                onClick={handleClickDeleteButton}
-              >
-                {' '}
-                {isLoadingMap[contact.id] && (
-                  <ColorRing visible={true} height="18" width="18" />
-                )}{' '}
-                Delete
-              </button>
-            </li>
-          ))
-        )}
-      </ul>
-    </div>
+  const filteredContacts = contacts.items.filter(contact =>
+    contact.name.toLowerCase().includes(filter.toLowerCase())
   );
-}
 
-export default ContactsList;
+  return (
+    <>
+    {contacts.isLoading && <Loader />}
+    {contacts.error && <Error error={contacts.error}/>}
+    <ul >
+        {filteredContacts.map(contact => {
+          const { id, name, phone } = contact;
+          return (
+            <li key={id}>
+              {name}: {phone}
+              <div>
+                <button
+                  type="button"
+                  onClick={() => deleteContact(id)}
+                >
+                  Delete
+                </button>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+     
+    </>
+  );
+};
+
+export default ContactList;

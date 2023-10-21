@@ -1,38 +1,38 @@
-import axios from "axios";
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { addContact, deleteContact, getContacts } from 'Services/Api';
 
-axios.defaults.baseURL = "https://6533cc0ee1b6f4c590464683.mockapi.io";
-export const fetchContacts = createAsyncThunk("contacts/fetchAllContacts", async (_, thunkAPI) => {
+export const fetchContacts = createAsyncThunk(
+  'contacts/fetchAll',
+  async (_, thunkApi) => {
     try {
-        const response = await axios.get("/contacts");
-        return response.data;
-
-    } catch (e) {
-        console.log(e.message);
-
-        return thunkAPI.rejectWithValue(e.message);
+      const postData = await getContacts();
+      return postData;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.message);
     }
-});
-
-export const addContact = createAsyncThunk(
-    "contacts/addContact",
-    async ({ phone, name }, thunkAPI) => {
-        try {
-            const response = await axios.post("/contacts", ({ phone, name }));
-            return response.data;
-        } catch (e) {
-            return thunkAPI.rejectWithValue(e.message);
-        }
-    }
+  }
 );
-export const deleteContact = createAsyncThunk("contacts?deleteContact",
-    async (id, thunkAPI) => {
-        try {
-            const response = await axios.delete(`/contacts/${id}`);
-            return response.data;
 
-        } catch (e) {
-            return thunkAPI.rejectWithValue(e.message);
+export const requestAddContact = createAsyncThunk(
+  'contacts/addContact',
+  async (contact, thunkApi) => {
+    try {
+      const postData = await addContact(contact);
+      return postData;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
 
-        }
-    })
+export const requestDeleteContact = createAsyncThunk(
+  'contacts/deleteContact',
+  async (id, thunkApi) => {
+    try {
+      const postData = await deleteContact(id);
+      return postData;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
